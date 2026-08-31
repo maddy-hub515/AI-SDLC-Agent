@@ -1,0 +1,20 @@
+Using launch settings from src\SmartAIAgent.Api\Properties\launchSettings.json...
+[15:36:10 INF] Executed DbCommand (34ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+[15:36:10 INF] Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+[15:36:10 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+[15:36:10 INF] No migrations were applied. The database is already up to date.
+[15:36:10 INF] Now listening on: http://localhost:5065
+[15:36:10 INF] Application started. Press Ctrl+C to shut down.
+[15:36:10 INF] Hosting environment: Development
+[15:36:10 INF] Content root path: C:\Mine\Learnings\AI Projects\SmartAIAgent\src\SmartAIAgent.Api
+[15:36:12 INF] Request starting HTTP/1.1 GET http://localhost:5065/health - null null
+[15:36:12 WRN] Failed to determine the https port for redirect.
+[15:36:12 INF] Executing endpoint 'Health checks'
+[15:36:12 INF] Executed endpoint 'Health checks'
+[15:36:12 INF] HTTP GET /health responded 200 in 35.0715 ms
+[15:36:12 INF] Request finished HTTP/1.1 GET http://localhost:5065/health - 200 null text/plain 70.2186ms

@@ -1,0 +1,28 @@
+Business Requirement:
+
+Title:
+{requirementTitle}
+
+Description:
+{requirementDescription}
+
+Generate the structured requirement analysis according to this JSON contract:
+
+{
+  "userStory": {
+    "title": "string",
+    "description": "string"
+  },
+  "acceptanceCriteria": [
+    "string"
+  ],
+  "technicalAreas": [
+    "string"
+  ],
+  "developmentTasks": [
+    "string"
+  ],
+  "assumptions": [
+    "string"
+  ]
+}

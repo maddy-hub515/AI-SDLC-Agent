@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.vscode/
+node_modules/
+dist/
+coverage/
+TestResults/
+smart-ai-agent.db
+*.db-shm
+*.db-wal

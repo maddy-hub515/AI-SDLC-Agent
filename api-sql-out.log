@@ -1,0 +1,134 @@
+Using launch settings from src\SmartAIAgent.Api\Properties\launchSettings.json...
+[15:52:08 INF] Executed DbCommand (317ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [SmartAIAgent];
+[15:52:08 INF] Executed DbCommand (81ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [SmartAIAgent] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+[15:52:08 INF] Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+[15:52:08 INF] Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+[15:52:08 INF] Executed DbCommand (23ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+[15:52:08 INF] Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+[15:52:08 INF] Applying migration '20260828102031_InitialCreate'.
+[15:52:08 INF] Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Projects] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [CreatedAtUtc] datetime2 NOT NULL,
+    CONSTRAINT [PK_Projects] PRIMARY KEY ([Id])
+);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Requirements] (
+    [Id] uniqueidentifier NOT NULL,
+    [Title] nvarchar(200) NOT NULL,
+    [Description] nvarchar(4000) NOT NULL,
+    [Status] int NOT NULL,
+    [CreatedAtUtc] datetime2 NOT NULL,
+    [UpdatedAtUtc] datetime2 NOT NULL,
+    CONSTRAINT [PK_Requirements] PRIMARY KEY ([Id])
+);
+[15:52:08 INF] Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [AgentRuns] (
+    [Id] uniqueidentifier NOT NULL,
+    [RequirementId] uniqueidentifier NOT NULL,
+    [Status] int NOT NULL,
+    [CurrentStage] int NOT NULL,
+    [StartedAtUtc] datetime2 NOT NULL,
+    [CompletedAtUtc] datetime2 NULL,
+    [ErrorMessage] nvarchar(2000) NULL,
+    CONSTRAINT [PK_AgentRuns] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_AgentRuns_Requirements_RequirementId] FOREIGN KEY ([RequirementId]) REFERENCES [Requirements] ([Id]) ON DELETE NO ACTION
+);
+[15:52:08 INF] Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [UserStories] (
+    [Id] uniqueidentifier NOT NULL,
+    [RequirementId] uniqueidentifier NOT NULL,
+    [Title] nvarchar(200) NOT NULL,
+    [Description] nvarchar(4000) NOT NULL,
+    [CreatedAtUtc] datetime2 NOT NULL,
+    CONSTRAINT [PK_UserStories] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_UserStories_Requirements_RequirementId] FOREIGN KEY ([RequirementId]) REFERENCES [Requirements] ([Id]) ON DELETE NO ACTION
+);
+[15:52:08 INF] Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Approvals] (
+    [Id] uniqueidentifier NOT NULL,
+    [AgentRunId] uniqueidentifier NOT NULL,
+    [Type] int NOT NULL,
+    [Status] int NOT NULL,
+    [Comment] nvarchar(2000) NULL,
+    [CreatedAtUtc] datetime2 NOT NULL,
+    [DecidedAtUtc] datetime2 NULL,
+    CONSTRAINT [PK_Approvals] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Approvals_AgentRuns_AgentRunId] FOREIGN KEY ([AgentRunId]) REFERENCES [AgentRuns] ([Id]) ON DELETE NO ACTION
+);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [WorkflowEvents] (
+    [Id] uniqueidentifier NOT NULL,
+    [AgentRunId] uniqueidentifier NOT NULL,
+    [FromStage] int NOT NULL,
+    [ToStage] int NOT NULL,
+    [EventType] nvarchar(100) NOT NULL,
+    [Message] nvarchar(2000) NOT NULL,
+    [CreatedAtUtc] datetime2 NOT NULL,
+    CONSTRAINT [PK_WorkflowEvents] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_WorkflowEvents_AgentRuns_AgentRunId] FOREIGN KEY ([AgentRunId]) REFERENCES [AgentRuns] ([Id]) ON DELETE NO ACTION
+);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [UserStoryAcceptanceCriteria] (
+    [Id] uniqueidentifier NOT NULL,
+    [UserStoryId] uniqueidentifier NOT NULL,
+    [Value] nvarchar(500) NOT NULL,
+    CONSTRAINT [PK_UserStoryAcceptanceCriteria] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_UserStoryAcceptanceCriteria_UserStories_UserStoryId] FOREIGN KEY ([UserStoryId]) REFERENCES [UserStories] ([Id]) ON DELETE NO ACTION
+);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_AgentRuns_CurrentStage] ON [AgentRuns] ([CurrentStage]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_AgentRuns_RequirementId] ON [AgentRuns] ([RequirementId]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_AgentRuns_Status] ON [AgentRuns] ([Status]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Approvals_AgentRunId] ON [Approvals] ([AgentRunId]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Approvals_Status] ON [Approvals] ([Status]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Requirements_CreatedAtUtc] ON [Requirements] ([CreatedAtUtc]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Requirements_Status] ON [Requirements] ([Status]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_UserStories_RequirementId] ON [UserStories] ([RequirementId]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_UserStoryAcceptanceCriteria_UserStoryId] ON [UserStoryAcceptanceCriteria] ([UserStoryId]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_WorkflowEvents_AgentRunId] ON [WorkflowEvents] ([AgentRunId]);
+[15:52:08 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_WorkflowEvents_CreatedAtUtc] ON [WorkflowEvents] ([CreatedAtUtc]);
+[15:52:08 INF] Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260828102031_InitialCreate', N'8.0.8');
+[15:52:08 INF] Now listening on: http://localhost:5065
+[15:52:08 INF] Application started. Press Ctrl+C to shut down.
+[15:52:08 INF] Hosting environment: Development
+[15:52:08 INF] Content root path: C:\Mine\Learnings\AI Projects\SmartAIAgent\src\SmartAIAgent.Api
+[15:52:15 INF] Request starting HTTP/1.1 GET http://localhost:5065/health - null null
+[15:52:15 WRN] Failed to determine the https port for redirect.
+[15:52:15 INF] Executing endpoint 'Health checks'
+[15:52:15 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+[15:52:15 INF] Executed endpoint 'Health checks'
+[15:52:15 INF] HTTP GET /health responded 200 in 39.0790 ms
+[15:52:15 INF] Request finished HTTP/1.1 GET http://localhost:5065/health - 200 null text/plain 71.4205ms
